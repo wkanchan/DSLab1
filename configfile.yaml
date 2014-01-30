@@ -1,0 +1,52 @@
+# Defines which nodes are used in the system and how to connect to them.  
+# This element should only be referenced during the constructor's initial 
+# setup.  
+# All names must be unique. 
+# No other nodes are known. 
+# These names will be used for src and dest addresses for the Message 
+# The local node’s name is included in this list
+configuration:
+  - name	: alice	
+    ip	: 128.237.190.150
+    port	: 12344 # This is the incoming port on which MP will listen	
+    # May be changed for further communication as usual	
+  - name	: bob 	
+    ip	: 128.237.190.150	
+    port	: 14255
+  - name : jiawen   
+    ip  : 69.181.189.36 
+    port  : 15166
+  - name  : anvitha   
+    ip  : 69.181.189.36
+    port  : 16077
+
+sendRules :
+  - action : delay # delay Lookup Message  
+    kind : Lookup 
+  - action : drop # drop Ack message sent from bob to alice
+    src : bob  
+    dest : alice 
+    kind : Ack
+  - action : duplicate # duplicate Post message sent from bob to jiawen 
+    src : bob
+    dest: alice
+    kind: Post
+  - action : delay # delay Request message sent from jiawen to alice
+    src : jiawen
+    dest : anvitha
+    kind : Request
+
+receiveRules :  
+  - action : drop
+    src: bob
+    dest: alice
+    kind: Reply
+  - action : delay
+    src : anvitha
+    dest : bob
+    kind : Ack
+  - action : duplicate
+    src : alice
+    dest : anvitha
+    kind: Reply
+
