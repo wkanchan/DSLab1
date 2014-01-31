@@ -11,7 +11,7 @@ public class LogicalClock extends ClockService {
 	@Override
 	protected void incrementTimeStamp(TimeStampedMessage message) {
 		synchronized (this) {
-			  timeStamp.setLog_timeStamp(Math.max(timeStamp.getLog_timeStamp(), (Integer)message.getLogTimeStamp()) + 1);
+			  timeStamp.setLog_timeStamp(Math.max(timeStamp.getLog_timeStamp(), (Integer)message.getTimeStamp().getLog_timeStamp()) + 1);
 		}		
 	}
 }

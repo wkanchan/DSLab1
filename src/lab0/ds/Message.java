@@ -5,12 +5,12 @@ public class Message implements Serializable {
 	
     private static final long serialVersionUID = 1L;
     
-    private String source;
-	private String destination;
-	private int sequenceNumber;
-	private boolean duplicate;
-    private String kind;
-	private Object data;
+    protected String source;
+    protected String destination;
+	protected int sequenceNumber;
+	protected boolean duplicate;
+    protected String kind;
+    protected Object data;
 	
 	public Message(String destination, String kind, Object data) {
 		this.destination = destination;

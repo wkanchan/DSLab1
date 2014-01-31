@@ -1,10 +1,18 @@
 package lab0.ds;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.Map.*;
-import java.util.concurrent.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JTextArea;
 
@@ -25,6 +33,8 @@ public class MessagePasser {
 	private ConcurrentHashMap<String, Connection> connectionPool;
 
 	private JTextArea textArea;
+	private Socket loggerSocket;
+	private ObjectOutputStream loggerOut;
 
 	private ClockService clockService;
 	public MessagePasser(JTextArea textArea) {
@@ -56,6 +66,15 @@ public class MessagePasser {
 		ruleChecker = new RuleChecker(configurationFileReader.getSendRules(), 
 				configurationFileReader.getReceiveRules(), textArea);
 
+		// Initiate a connection to logger
+		// TODO Read logger listen port from configuration file
+		try {
+			loggerSocket = new Socket("127.0.0.1", 6969);
+			loggerOut = new ObjectOutputStream(loggerSocket.getOutputStream());
+			textArea.append("Connected to logger");
+		} catch (Exception e) {
+			textArea.append("Cannot connect to logger\n");
+		}
 
 		// Setup server socket
 		localPortNumber = configurationFileReader.getProcessPortByName(localName);
@@ -143,6 +162,15 @@ public class MessagePasser {
 				}
 				connection.getOutputStream().writeObject(toSendMessage);
 				textArea.append("Send a message to " + toSendMessage.getDestination() + "\n");
+				
+				// Log
+				try {
+					loggerOut.writeObject(toSendMessage);
+					textArea.append("Event logged");
+				} catch (Exception e) {
+					e.printStackTrace();
+					textArea.append("Cannot log the send event");
+				}
 			} catch (IOException e) {
 			}
 		}
@@ -197,6 +225,15 @@ public class MessagePasser {
 			}
 		}
 
+		// Log
+		try {
+			loggerOut.writeObject(message);
+			textArea.append("Event logged");
+		} catch (Exception e) {
+			e.printStackTrace();
+			textArea.append("Cannot log the receive event");
+		}
+		
 		return message;
 	}
 
@@ -287,6 +324,10 @@ public class MessagePasser {
 				return ;
 			}
 			connection.getOutputStream().writeObject(message);
+
+			// Log
+			loggerOut.writeObject(message);
+			textArea.append("Event logged");
 		} catch (IOException e) {
 			textArea.append("Send message fail!\n");
 		}
