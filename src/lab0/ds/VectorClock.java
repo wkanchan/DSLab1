@@ -6,16 +6,11 @@ public class VectorClock extends ClockService {
 		super(ClockType.VECTOR);
 	}
 
-	void incrementTimeStamp(TimeStampedMessage message){
-		synchronized (this) {
-		}
+	/*remove this */
+	@Override
+	protected void incrementTimeStamp(TimeStampedMessage message) {
+		// TODO Auto-generated method stub
+		
 	}
-	
-	/**
-	 * When there is a new process, this should be called to add the process's vector clock entry.
-	 * @param processName
-	 */
-	public void addEntryForProcess(String processName) {
-		timeStamp.setVec_timeStamp(processName, 0);
-	}
+
 }

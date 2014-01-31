@@ -6,11 +6,7 @@ public abstract class ClockService {
 
 	protected ClockType clockType = null;
 	
-	/**
-	 * There is only single clock in the system. So, this is a static variable that stores current time stamp.
-	 * Protected: We want this to be modifiable only to our logical & vector clocks.
-	 */
-	protected static TimeStamp timeStamp = new TimeStamp(0, new HashMap<String, Integer>());
+	protected static TimeStamp timeStamp;
 	
 	public static TimeStamp getCurrentTimeStamp() {
 		return timeStamp;
@@ -27,4 +23,6 @@ public abstract class ClockService {
 	public void setClockType(ClockType clockType) {
 		this.clockType = clockType;
 	}
+	
+	protected abstract void incrementTimeStamp(TimeStampedMessage message);
 }

@@ -88,8 +88,8 @@ public class ConfigurationFileReader {
 			int portNum = Integer.parseInt(String.valueOf(i.get("port")));
 			processes.add(new Process(name, ipAddress, portNum));
 			
-			// Add an entry to the vector clock
-			vectorClock.addEntryForProcess(name);
+			// TODO: Add an entry to the vector clock
+			
 		}
 	}
 

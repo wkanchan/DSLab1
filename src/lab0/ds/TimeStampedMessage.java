@@ -8,6 +8,7 @@ public class TimeStampedMessage extends Message{
 	private static final long serialVersionUID = 1L;
 	private ClockService clockService;
 	private TimeStamp timeStamp;
+	private ClockService clockType;
 	public TimeStampedMessage(Message message) {
 		super(message);
 	}
@@ -17,14 +18,15 @@ public class TimeStampedMessage extends Message{
 		super(source, destination, sequenceNumber, duplicate, kind, data);
 	}
 
-	public TimeStampedMessage(String destination, String kind, Object data) {
+	public TimeStampedMessage(String destination, String kind, Object data, TimeStamp timeStamp) {
 		super(destination, kind, data);
+		this.setClockType(clockType);
 	}
 	
-	public TimeStampedMessage(TimeStamp timeStamp, String source, String destination, String data) {
-		super(source, destination, data);
-		this.timeStamp = timeStamp;
-	}
+//	public TimeStampedMessage(TimeStamp timeStamp, String source, String destination, String data) {
+//		super(source, destination, data);
+//		this.timeStamp = timeStamp;
+//	}
 
 	public ClockService getClockService() {
 		return clockService;
@@ -36,5 +38,13 @@ public class TimeStampedMessage extends Message{
 
 	public int getLogTimeStamp() {
 		return timeStamp.getLog_timeStamp();
+	}
+
+	public ClockService getClockType() {
+		return clockType;
+	}
+
+	public void setClockType(ClockService clockType) {
+		this.clockType = clockType;
 	}
 }

@@ -25,7 +25,7 @@ public class RuleChecker {
 		this.receiveRules = receiveRules;
 	}
 	
-	public ArrayList<Message> checkSendRule(Message message, ConcurrentLinkedQueue<Message> sendBuffer) {
+	public ArrayList<TimeStampedMessage> checkSendRule(TimeStampedMessage message, ConcurrentLinkedQueue<TimeStampedMessage> sendBuffer) {
 		// Check if matches a send rule
 		Rule rule = null;
 		for (Rule sendRule: sendRules) {
@@ -57,7 +57,7 @@ public class RuleChecker {
 			break;
 		}
 		
-		ArrayList<Message> toSendMessages = new ArrayList<Message>();
+		ArrayList<TimeStampedMessage> toSendMessages = new ArrayList<TimeStampedMessage>();
 		if (rule != null) { // if matches a rule, do corresponding action
 			String action = rule.getAction();
 			if (action.equals("drop")) {
@@ -67,7 +67,7 @@ public class RuleChecker {
 				message.setDuplicate(false);
 				toSendMessages.add(message);
 				
-				Message dupMessage = new Message(message);
+				TimeStampedMessage dupMessage = new TimeStampedMessage(message);
 				dupMessage.setDuplicate(true);
 				toSendMessages.add(dupMessage);
 			} else if (action.equals("delay")) {
@@ -84,7 +84,7 @@ public class RuleChecker {
 		return toSendMessages;
 	}
 	
-	public Message checkReceiveRule(Message message, ConcurrentLinkedDeque<Message> delayedMessageBuffer) {
+	public TimeStampedMessage checkReceiveRule(TimeStampedMessage message, ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer) {
 		/* Check if matches a receive rule */
 		Rule rule = null;
 		for (Rule receiveRule: receiveRules) {
@@ -116,7 +116,7 @@ public class RuleChecker {
 			break;
 		}
 		
-		Message toReceiveMessage = null;
+		TimeStampedMessage toReceiveMessage = null;
 		if (rule != null) { // if matches a rule, do corresponding action
 			String action = rule.getAction();
 			if (action.equals("drop")) {

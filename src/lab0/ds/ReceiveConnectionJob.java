@@ -11,13 +11,13 @@ public class ReceiveConnectionJob implements Runnable {
 
 	private ServerSocket serverSocket;
 	private ConcurrentHashMap<String, Connection> connectionPool;
-	private ConcurrentLinkedQueue<Message> receiveBuffer;
+	private ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer;
 	private ConfigurationFileReader configurationFileReader;
 	
 	private JTextArea textArea;
 
 	public ReceiveConnectionJob(ServerSocket serverSocket, ConcurrentHashMap<String, Connection> connectionPool,
-		ConcurrentLinkedQueue<Message> receiveBuffer, ConfigurationFileReader configurationFileReader,
+		ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer, ConfigurationFileReader configurationFileReader,
 		JTextArea textArea) {
 		this.serverSocket = serverSocket;
 		this.connectionPool = connectionPool;
