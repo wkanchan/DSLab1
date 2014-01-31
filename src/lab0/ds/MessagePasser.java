@@ -74,7 +74,7 @@ public class MessagePasser {
 
 		/* Run thread to receive connection */
 		Runnable receiveConnectionJob = new ReceiveConnectionJob(serverSocket, connectionPool, 
-				receiveBuffer, configurationFileReader, textArea);
+				receiveBuffer, configurationFileReader, textArea, clockService);
 		Thread receiveConnectionThread = new Thread(receiveConnectionJob);
 		receiveConnectionThread.start();
 
@@ -242,7 +242,7 @@ public class MessagePasser {
 
 			// Create a new thread for this connection
 			Runnable receiveMessageJob = new ReceiveMessageJob(connection, receiveBuffer, 
-					textArea, connectionPool);
+					textArea, connectionPool, clockService);
 			Thread receiveMessageThread = new Thread(receiveMessageJob);
 			receiveMessageThread.start();	
 		} catch (UnknownHostException e) {
@@ -254,11 +254,16 @@ public class MessagePasser {
 		return connection;
 	}
 
-	private void sendDelayedMessage(TimeStampedMessage message) {
-		String destination = message.getDestination();
+	private void sendDelayedMessage(TimeStampedMessage timeStampedMessage) {
+		String destination = timeStampedMessage.getDestination();
 		Connection connection = null;
-		if (!connectionPool.containsKey(message.getDestination())) {
-			connection = createConnection(message.getDestination(), configurationFileReader.getProcesses());
+		
+		/* Add timestamp to the message */
+		clockService.incrementTimeStamp(timeStampedMessage);
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		
+		if (!connectionPool.containsKey(timeStampedMessage.getDestination())) {
+			connection = createConnection(timeStampedMessage.getDestination(), configurationFileReader.getProcesses());
 			if (connection == null) {
 				textArea.append("Cannot create connection, give up sending message!\n");
 				return ;
@@ -288,7 +293,7 @@ public class MessagePasser {
 				}
 				return ;
 			}
-			connection.getOutputStream().writeObject(message);
+			connection.getOutputStream().writeObject(timeStampedMessage);
 		} catch (IOException e) {
 			textArea.append("Send message fail!\n");
 		}

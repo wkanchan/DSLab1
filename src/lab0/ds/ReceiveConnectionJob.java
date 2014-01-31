@@ -10,6 +10,7 @@ import javax.swing.JTextArea;
 public class ReceiveConnectionJob implements Runnable {
 
 	private ServerSocket serverSocket;
+	private ClockService clockService;
 	private ConcurrentHashMap<String, Connection> connectionPool;
 	private ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer;
 	private ConfigurationFileReader configurationFileReader;
@@ -18,12 +19,13 @@ public class ReceiveConnectionJob implements Runnable {
 
 	public ReceiveConnectionJob(ServerSocket serverSocket, ConcurrentHashMap<String, Connection> connectionPool,
 		ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer, ConfigurationFileReader configurationFileReader,
-		JTextArea textArea) {
+		JTextArea textArea, ClockService clockService) {
 		this.serverSocket = serverSocket;
 		this.connectionPool = connectionPool;
 		this.receiveBuffer = receiveBuffer;
 		this.configurationFileReader = configurationFileReader;
 		this.textArea = textArea;
+		this.clockService = clockService;
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class ReceiveConnectionJob implements Runnable {
 
 					// Create a new thread for this socket
 					Runnable receiveMessageJob = new ReceiveMessageJob(connection, receiveBuffer,
-						textArea, connectionPool);
+						textArea, connectionPool, clockService);
 					Thread receiveMessageThread = new Thread(receiveMessageJob);
 					receiveMessageThread.start();
 				}
