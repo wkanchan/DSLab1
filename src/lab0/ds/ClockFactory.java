@@ -1,19 +1,24 @@
 package lab0.ds;
 
+/**
+ * The only place for system-wide logical or vector clock
+ * @author kwittawat
+ *
+ */
 public class ClockFactory {
+	
+	private static LogicalClock logicalClock = new LogicalClock();
+	private static VectorClock vectorClock = new VectorClock();
+	
 	public static ClockService useClock(ClockType model) {
-		ClockService clock = null;
 		switch (model) {
 		case LOGICAL:
-			clock = new LogicalClock();
-			break;
+			return logicalClock;
 		case VECTOR:
-			clock = new VectorClock();
-			break;
+			return vectorClock;
 		default:
-			// throw some exception
-			break;
+			// TODO: throw some exception
+			return null;
 		}
-		return clock;
 	}
 }

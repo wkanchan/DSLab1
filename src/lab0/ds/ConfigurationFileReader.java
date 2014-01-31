@@ -74,11 +74,22 @@ public class ConfigurationFileReader {
 		if (list == null) {
 			return ;
 		}
+
+		// Get a global vector clock
+		ClockService clock = ClockFactory.useClock(ClockType.VECTOR);
+		VectorClock vectorClock = null;
+		if (clock instanceof VectorClock) {
+			vectorClock = (VectorClock)clock;
+		}
+		
 		for (HashMap<String, String> i : list) {
 			String name = i.get("name");
 			String ipAddress = i.get("ip");
 			int portNum = Integer.parseInt(String.valueOf(i.get("port")));
 			processes.add(new Process(name, ipAddress, portNum));
+			
+			// Add an entry to the vector clock
+			vectorClock.addEntryForProcess(name);
 		}
 	}
 
