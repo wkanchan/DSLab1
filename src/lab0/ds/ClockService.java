@@ -14,4 +14,6 @@ public abstract class ClockService {
 	public void setClockType(ClockType clockType) {
 		this.clockType = clockType;
 	}
+	
+	protected abstract void incrementTimeStamp(TimeStampedMessage message);
 }

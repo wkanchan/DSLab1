@@ -10,15 +10,15 @@ import javax.swing.JTextArea;
 public class ReceiveMessageJob implements Runnable {
     
     private Connection connection;
-    private ConcurrentLinkedQueue<Message> receiveBuffer;
+    private ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer;
     private ConcurrentHashMap<String, Connection> connectionPool;
     
     private JTextArea textArea;
     
-    public ReceiveMessageJob (Connection connection, ConcurrentLinkedQueue<Message> receiveBuffer,
+    public ReceiveMessageJob (Connection connection, ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer2,
     	JTextArea textArea, ConcurrentHashMap<String, Connection> connectionPool) {
         this.connection = connection;        
-        this.receiveBuffer = receiveBuffer;
+        this.receiveBuffer = receiveBuffer2;
         this.textArea = textArea;
         this.connectionPool = connectionPool;
     }

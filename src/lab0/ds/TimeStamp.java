@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class TimeStamp {
 	private int log_timeStamp;
-	private ArrayList<Integer> vec_timeStamp;
+	private  int[] vec_timeStamp;
 
-	public TimeStamp(Integer log_timeStamp, ArrayList<Integer> vec_timeStamp) {
+	public TimeStamp(Integer log_timeStamp, int[] vec_timeStamp) {
 		super();
 		this.log_timeStamp = log_timeStamp;
 		this.vec_timeStamp = vec_timeStamp;

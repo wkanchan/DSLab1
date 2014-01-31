@@ -16,30 +16,37 @@ public class MessagePasser {
 	private ConfigurationFileReader configurationFileReader;
 	private RuleChecker ruleChecker;
 
-	private ConcurrentLinkedQueue<Message> sendBuffer;
-	private ConcurrentLinkedQueue<Message> receiveBuffer;
-	private ConcurrentLinkedDeque<Message> delayedMessageBuffer; // store received messages that are delayed
+	private ConcurrentLinkedQueue<TimeStampedMessage> sendBuffer;
+	private ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer;
+	private ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer; // store received messages that are delayed
 
 	private ServerSocket serverSocket;
 	private int localPortNumber;
 	private ConcurrentHashMap<String, Connection> connectionPool;
-	
+
 	private JTextArea textArea;
-	
+
+	private ClockService clockService;
 	public MessagePasser(JTextArea textArea) {
 		this.textArea = textArea;
 	}
 
-	public boolean run(String configurationFileName, String localName) {
+	public boolean run(String configurationFileName, String localName, String clock) {
 		this.configurationFileName = configurationFileName;
 		this.localName = localName;
 		this.sequenceNumber = 1;
+		if(clock.contains("logical")) {
+			clockService = ClockFactory.useClock(ClockType.LOGICAL);
+		}
+		else if(clock.contains("vector")) {
+			clockService = ClockFactory.useClock(ClockType.VECTOR);
+		}
 		connectionPool = new ConcurrentHashMap<String, Connection>();
 
 		// Initiate buffer
-		sendBuffer = new ConcurrentLinkedQueue<Message>();
-		receiveBuffer = new ConcurrentLinkedQueue<Message>();
-		delayedMessageBuffer = new ConcurrentLinkedDeque<Message>();
+		sendBuffer = new ConcurrentLinkedQueue<TimeStampedMessage>();
+		receiveBuffer = new ConcurrentLinkedQueue<TimeStampedMessage>();
+		delayedMessageBuffer = new ConcurrentLinkedDeque<TimeStampedMessage>();
 
 		// Parse configuration file
 		configurationFileReader = new ConfigurationFileReader(textArea);
@@ -48,8 +55,8 @@ public class MessagePasser {
 		// Initiate ruleChecker
 		ruleChecker = new RuleChecker(configurationFileReader.getSendRules(), 
 				configurationFileReader.getReceiveRules(), textArea);
-		
-		
+
+
 		// Setup server socket
 		localPortNumber = configurationFileReader.getProcessPortByName(localName);
 		textArea.append("Local port number: " + localPortNumber + "\n");
@@ -79,6 +86,7 @@ public class MessagePasser {
 		// check if file is modified
 		File file = new File(configurationFileName);
 		
+		@SuppressWarnings("unused")
 		TimerTask task = new FileModified(file) {
 			protected void onChange( File file ) {
 				/* read from dropbox folder */
@@ -101,25 +109,26 @@ public class MessagePasser {
 			connection = connectionPool.get(message.getDestination());
 		}
 
+		TimeStampedMessage timeStampedMessage = new TimeStampedMessage(message);
 		// Set message's header
-		message.setSequenceNumber(sequenceNumber++);
-		message.setSource(localName);
-		message.setDuplicate(false);
-		
+		timeStampedMessage.setSequenceNumber(sequenceNumber++);
+		timeStampedMessage.setSource(localName);
+		timeStampedMessage.setDuplicate(false);
+
 		/* Add timestamp to the message */
-		
+
 		// Check send rule
-		ArrayList<Message> toSendMessages = ruleChecker.checkSendRule(message, sendBuffer);
+		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
 		if (toSendMessages.isEmpty()) { // if no message need to be sent now
 			return ;
 		}
 
 		// Send message
-		for (Message toSendMessage: toSendMessages) {
+		for (TimeStampedMessage toSendMessage: toSendMessages) {
 			try {
 				if (connection.getOutputStream() == null) {
 					textArea.append("Connection's output stream doesn't exist\n");
-					
+
 					// remove this connection from connection pool
 					Iterator<Entry<String, Connection>> iter = connectionPool.entrySet().iterator(); 
 					while (iter.hasNext()) { 
@@ -140,7 +149,7 @@ public class MessagePasser {
 
 		// Send out all delayed message
 		if (!sendBuffer.isEmpty()) {
-			for (Message toSendMessage: sendBuffer) {
+			for (TimeStampedMessage toSendMessage: sendBuffer) {
 				sendDelayedMessage(toSendMessage);
 			}
 			sendBuffer.clear();
@@ -148,10 +157,11 @@ public class MessagePasser {
 		}
 	}
 
-	public Message receive() {
+	public TimeStampedMessage receive() {
 		// check if file is modified
 		File file = new File(configurationFileName);
 
+		@SuppressWarnings("unused")
 		TimerTask task = new FileModified(file) {
 			protected void onChange( File file ) {
 				//code the action on a change
@@ -168,7 +178,7 @@ public class MessagePasser {
 			return delayedMessageBuffer.poll();
 		}
 
-		Message message = null;
+		TimeStampedMessage message = null;
 		while (true) {
 			/* Get a message from receive buffer */
 			while (receiveBuffer.isEmpty()) {
@@ -180,7 +190,7 @@ public class MessagePasser {
 			message = receiveBuffer.poll();
 
 			/* Check receive rule */
-			Message toReturnMessage = ruleChecker.checkReceiveRule(message, delayedMessageBuffer);
+			TimeStampedMessage toReturnMessage = ruleChecker.checkReceiveRule(message, delayedMessageBuffer);
 			if (toReturnMessage != null) {
 				message = toReturnMessage;
 				break;
@@ -189,20 +199,20 @@ public class MessagePasser {
 
 		return message;
 	}
-	
+
 	public void stop() {
 		// Close server socket
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
 		}
-		
+
 		// Close client socket
 		Iterator<Entry<String, Connection>> iter = connectionPool.entrySet().iterator(); 
 		while (iter.hasNext()) { 
 			Entry<String, Connection> entry = iter.next();
 			connectionPool.remove(entry.getKey());
-		    entry.getValue().close();;
+			entry.getValue().close();;
 		} 
 	}
 
@@ -230,7 +240,7 @@ public class MessagePasser {
 
 			// Create a new thread for this connection
 			Runnable receiveMessageJob = new ReceiveMessageJob(connection, receiveBuffer, 
-				textArea, connectionPool);
+					textArea, connectionPool);
 			Thread receiveMessageThread = new Thread(receiveMessageJob);
 			receiveMessageThread.start();	
 		} catch (UnknownHostException e) {
@@ -242,7 +252,7 @@ public class MessagePasser {
 		return connection;
 	}
 
-	private void sendDelayedMessage(Message message) {
+	private void sendDelayedMessage(TimeStampedMessage message) {
 		String destination = message.getDestination();
 		Connection connection = null;
 		if (!connectionPool.containsKey(message.getDestination())) {
@@ -263,7 +273,7 @@ public class MessagePasser {
 		try {
 			if (connection.getOutputStream() == null) {
 				textArea.append("Connection's output stream doesn't exist\n");
-				
+
 				// remove this connection from connection pool
 				Iterator<Entry<String, Connection>> iter = connectionPool.entrySet().iterator(); 
 				while (iter.hasNext()) { 
