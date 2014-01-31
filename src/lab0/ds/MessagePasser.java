@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JTextArea;
 
+import edu.cmu.ds.logger.LoggerInfo;
+
 public class MessagePasser {
 	private String configurationFileName;
 	private String localName;
@@ -67,11 +69,11 @@ public class MessagePasser {
 				configurationFileReader.getReceiveRules(), textArea);
 
 		// Initiate a connection to logger
-		// TODO Read logger listen port from configuration file
 		try {
-			loggerSocket = new Socket("127.0.0.1", 6969);
+			LoggerInfo loggerInfo = configurationFileReader.getLoggerInfo();
+			loggerSocket = new Socket(loggerInfo.getIpAddress(), loggerInfo.getPort());
 			loggerOut = new ObjectOutputStream(loggerSocket.getOutputStream());
-			textArea.append("Connected to logger");
+			textArea.append("Connected to logger at "+loggerInfo.getIpAddress()+":"+loggerInfo.getPort()+"\n");
 		} catch (Exception e) {
 			textArea.append("Cannot connect to logger\n");
 		}
@@ -93,7 +95,7 @@ public class MessagePasser {
 
 		/* Run thread to receive connection */
 		Runnable receiveConnectionJob = new ReceiveConnectionJob(serverSocket, connectionPool, 
-				receiveBuffer, configurationFileReader, textArea);
+				receiveBuffer, configurationFileReader, textArea, clockService);
 		Thread receiveConnectionThread = new Thread(receiveConnectionJob);
 		receiveConnectionThread.start();
 
@@ -133,9 +135,11 @@ public class MessagePasser {
 		timeStampedMessage.setSequenceNumber(sequenceNumber++);
 		timeStampedMessage.setSource(localName);
 		timeStampedMessage.setDuplicate(false);
-
+		
 		/* Add timestamp to the message */
-
+		clockService.incrementTimeStamp(timeStampedMessage);
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		
 		// Check send rule
 		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
 		if (toSendMessages.isEmpty()) { // if no message need to be sent now
@@ -277,7 +281,7 @@ public class MessagePasser {
 
 			// Create a new thread for this connection
 			Runnable receiveMessageJob = new ReceiveMessageJob(connection, receiveBuffer, 
-					textArea, connectionPool);
+					textArea, connectionPool, clockService);
 			Thread receiveMessageThread = new Thread(receiveMessageJob);
 			receiveMessageThread.start();	
 		} catch (UnknownHostException e) {
@@ -289,11 +293,24 @@ public class MessagePasser {
 		return connection;
 	}
 
-	private void sendDelayedMessage(TimeStampedMessage message) {
-		String destination = message.getDestination();
+	private void sendDelayedMessage(TimeStampedMessage timeStampedMessage) {
+		String destination = timeStampedMessage.getDestination();
 		Connection connection = null;
-		if (!connectionPool.containsKey(message.getDestination())) {
-			connection = createConnection(message.getDestination(), configurationFileReader.getProcesses());
+		
+		/* Add timestamp to the message */
+		clockService.incrementTimeStamp(timeStampedMessage);
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		
+		/* Log the event */
+		try {
+			loggerOut.writeObject(timeStampedMessage);
+			textArea.append("Event logged");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		if (!connectionPool.containsKey(timeStampedMessage.getDestination())) {
+			connection = createConnection(timeStampedMessage.getDestination(), configurationFileReader.getProcesses());
 			if (connection == null) {
 				textArea.append("Cannot create connection, give up sending message!\n");
 				return ;
@@ -323,11 +340,8 @@ public class MessagePasser {
 				}
 				return ;
 			}
-			connection.getOutputStream().writeObject(message);
+			connection.getOutputStream().writeObject(timeStampedMessage);
 
-			// Log
-			loggerOut.writeObject(message);
-			textArea.append("Event logged");
 		} catch (IOException e) {
 			textArea.append("Send message fail!\n");
 		}

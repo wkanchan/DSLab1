@@ -50,3 +50,6 @@ receiveRules :
     dest : anvitha
     kind: Reply
 
+loggerInfo :
+  - ip : 127.0.0.1
+    port : 6969

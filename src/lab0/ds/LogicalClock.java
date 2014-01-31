@@ -14,4 +14,5 @@ public class LogicalClock extends ClockService {
 			  timeStamp.setLog_timeStamp(Math.max(timeStamp.getLog_timeStamp(), (Integer)message.getTimeStamp().getLog_timeStamp()) + 1);
 		}		
 	}
+
 }

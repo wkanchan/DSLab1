@@ -25,4 +25,12 @@ public abstract class ClockService {
 	}
 	
 	protected abstract void incrementTimeStamp(TimeStampedMessage message);
+
+	public static TimeStamp getTimeStamp() {
+		return LogicalClock.timeStamp;
+	}
+
+	public static void setTimeStamp(TimeStamp timeStamp) {
+		LogicalClock.timeStamp = timeStamp;
+	}
 }

@@ -1,6 +1,5 @@
 package lab0.ds;
 
-import java.util.HashMap;
 
 public class TimeStamp {
 	private int log_timeStamp;

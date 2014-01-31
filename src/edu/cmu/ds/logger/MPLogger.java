@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import lab0.ds.ClockType;
+import lab0.ds.ConfigurationFileReader;
 import lab0.ds.TimeStamp;
 import lab0.ds.TimeStampedMessage;
 
@@ -17,7 +18,8 @@ public class MPLogger {
 	public final static String COMMAND_PROMPT = "MPLogger# ";
 	
 	private ConcurrentLinkedQueue<TimeStampedMessage> messagesList;
-	
+
+	private ConfigurationFileReader configurationFileReader;
 	private int localPortNumber;
 	private ServerSocket serverSocket;
 
@@ -25,7 +27,7 @@ public class MPLogger {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (args.length < 2) {
+		if (args.length < 1) {
 			System.out.println("Usage: <Config file name>");
 		} else {
 			new MPLogger(args[0]);
@@ -33,22 +35,25 @@ public class MPLogger {
 	}
 	
 	public MPLogger(String configurationFileName) {
-		// TODO Read configuration file for logger's listening port
+		// Parse configuration file
+		configurationFileReader = new ConfigurationFileReader(null);
+		configurationFileReader.parseFile(configurationFileName);
 		
+		// Initiate messages buffer
 		messagesList = new ConcurrentLinkedQueue<>();
 		
 		// Setup server socket
-		localPortNumber = 6969;//configurationFileReader.getProcessPortByName(localName);
-		System.out.println("Local port number: " + localPortNumber + "\n");
+		localPortNumber = configurationFileReader.getLoggerInfo().getPort();
+		System.out.println("Local port number: " + localPortNumber);
 		if (localPortNumber == -1) {
-			System.out.println("Invalid local port number!\n");
+			System.out.println("Invalid local port number!");
 			return;
 		}
 		try {
 			serverSocket = new ServerSocket(localPortNumber);
-			System.out.println("Set up server socket succeeded!\n");
+			System.out.println("Set up server socket succeeded!");
 		} catch (Exception e) {
-			System.out.println("Set up server socket failed!\n");
+			System.out.println("Set up server socket failed!");
 			return;
 		}
 		
