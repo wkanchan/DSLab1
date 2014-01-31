@@ -40,7 +40,7 @@ public class ReceiveMessageJob implements Runnable {
                 
                 /* Add timestamp to the message */
         		clockService.incrementTimeStamp(message);
-        		message.setTimeStamp(ClockService.getTimeStamp());
+        		message.setTimeStamp(clockService.getTimeStamp());
         		
                 if (message != null) {
                     receiveBuffer.add(message);

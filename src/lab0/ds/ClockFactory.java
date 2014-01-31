@@ -1,19 +1,25 @@
 package lab0.ds;
 
 public class ClockFactory {
-	public static ClockService useClock(ClockType model) {
-		ClockService clock = null;
+
+	private static LogicalClock logicalClock;
+	private static VectorClock vectorClock;
+
+	public static ClockService useClock(ClockType model, int numberOfProcesses) {
+		if (logicalClock == null) {
+			logicalClock = new LogicalClock();
+		}
+		if (vectorClock == null) {
+			vectorClock = new VectorClock(numberOfProcesses);
+		}
 		switch (model) {
 		case LOGICAL:
-			clock = new LogicalClock();
-			break;
+			return logicalClock;
 		case VECTOR:
-			clock = new VectorClock();
-			break;
+			return vectorClock;
 		default:
-			// throw some exception
-			break;
+			// TODO: throw some exception
+			return null;
 		}
-		return clock;
 	}
 }

@@ -1,21 +1,24 @@
 package lab0.ds;
 
-public class TimeStampedMessage extends Message{
+import java.io.Serializable;
 
+public class TimeStampedMessage extends Message implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8669213242403731962L;
+	
 	private ClockService clockService;
 	private TimeStamp timeStamp;
-	private ClockService clockType;
+	private ClockType clockType;
+
 	public TimeStampedMessage(Message message) {
 		super(message);
 	}
-	
-	public TimeStampedMessage(String source, String destination,
-			int sequenceNumber, boolean duplicate, String kind, Object data) {
+
+	public TimeStampedMessage(String source, String destination, int sequenceNumber, boolean duplicate, String kind,
+			Object data) {
 		super(source, destination, sequenceNumber, duplicate, kind, data);
 	}
 
@@ -23,7 +26,7 @@ public class TimeStampedMessage extends Message{
 		super(destination, kind, data);
 		this.setClockType(clockType);
 	}
-	
+
 	public ClockService getClockService() {
 		return clockService;
 	}
@@ -32,23 +35,36 @@ public class TimeStampedMessage extends Message{
 		this.clockService = clockService;
 	}
 
-	public int getLogTimeStamp() {
-		return timeStamp.getLog_timeStamp();
-	}
-
-	public ClockService getClockType() {
-		return clockType;
-	}
-
-	public void setClockType(ClockService clockType) {
-		this.clockType = clockType;
-	}
-	
 	public TimeStamp getTimeStamp() {
 		return timeStamp;
 	}
-
+	
 	public void setTimeStamp(TimeStamp timeStamp) {
 		this.timeStamp = timeStamp;
+	}
+
+	public ClockType getClockType() {
+		return clockType;
+	}
+
+	public void setClockType(ClockType clockType) {
+		this.clockType = clockType;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("TimeStampedMessage[");
+		buf.append("LOGICAL <");
+		buf.append(timeStamp.getLog_timeStamp());
+		buf.append(">, VECTOR <");
+		for (int t : timeStamp.getVec_timeStamp()) {
+			buf.append(t + ",");
+		}
+		buf.append(">, SequenceNumber=" + super.sequenceNumber + ", ");
+		buf.append("Source=" + super.source + ", ");
+		buf.append("Destination=" + super.destination + ", ");
+		buf.append("Kind=" + super.kind + "]");
+		return buf.toString();
 	}
 }

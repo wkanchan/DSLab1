@@ -1,17 +1,24 @@
 package lab0.ds;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JTextArea;
 
-import org.yaml.snakeyaml.*;
+import org.yaml.snakeyaml.Yaml;
+
+import edu.cmu.ds.logger.LoggerInfo;
 
 public class ConfigurationFileReader {
 	private HashMap<String, List<HashMap<String, String>>> parsedConfigFile;
 	private ArrayList<Process> processes;
 	private ArrayList<Rule> sendRules;
 	private ArrayList<Rule> receiveRules;
+	private LoggerInfo loggerInfo;
 	
 	private JTextArea textArea;
 	
@@ -29,9 +36,13 @@ public class ConfigurationFileReader {
 			parseProcesses(parsedConfigFile);
 			parseSendRules(parsedConfigFile);
 			parseReceiveRules(parsedConfigFile);
+			parseLoggerInfo(parsedConfigFile);
 			return true;
 		} catch (final FileNotFoundException fnfe) {
-			textArea.append("Yaml file read problem\n");
+			if (textArea != null)
+				textArea.append("Yaml file read problem\n");
+			else
+				System.out.println("Yaml file read problem");
 			return false;
 		}
 	}
@@ -46,6 +57,10 @@ public class ConfigurationFileReader {
 
 	public ArrayList<Rule> getReceiveRules() {
 		return receiveRules;
+	}
+	
+	public LoggerInfo getLoggerInfo() {
+		return loggerInfo;
 	}
 	
 	public String getProcessNameByIp(String ipAddress) {
@@ -74,6 +89,7 @@ public class ConfigurationFileReader {
 		if (list == null) {
 			return ;
 		}
+		
 		for (HashMap<String, String> i : list) {
 			String name = i.get("name");
 			String ipAddress = i.get("ip");
@@ -153,4 +169,19 @@ public class ConfigurationFileReader {
 			receiveRules.add(new Rule(action, source, destination, kind, sequenceNum));
 		}
 	}
+
+	/* get logger info list from config file (but we'll use only the first entry */
+	private void parseLoggerInfo(HashMap<String, List<HashMap<String, String>>> parsedConfigFile) {
+		List<HashMap<String, String>> loggerInfosList = parsedConfigFile.get("loggerInfo");
+		if (loggerInfosList == null) {
+			return;
+		}
+		if (!loggerInfosList.isEmpty()) {
+			HashMap<String, String> entry = loggerInfosList.get(0);
+			String ipAddress = entry.get("ip");
+			int port = Integer.parseInt(String.valueOf(entry.get("port")));
+			loggerInfo = new LoggerInfo(ipAddress, port);
+		}
+	}
+	
 }
