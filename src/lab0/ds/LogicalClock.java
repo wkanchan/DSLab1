@@ -1,5 +1,8 @@
 package lab0.ds;
 
+import clock.ClockService;
+import clock.ClockType;
+
 public class LogicalClock extends ClockService {
 
 	public static TimeStamp timeStamp;

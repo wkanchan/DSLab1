@@ -6,6 +6,8 @@ import java.util.concurrent.*;
 
 import javax.swing.JTextArea;
 
+import clock.ClockService;
+
 
 public class ReceiveConnectionJob implements Runnable {
 

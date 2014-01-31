@@ -16,6 +16,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JTextArea;
 
+import clock.ClockFactory;
+import clock.ClockService;
+import clock.ClockType;
+
 import edu.cmu.ds.logger.LoggerInfo;
 
 public class MessagePasser {
@@ -80,9 +84,9 @@ public class MessagePasser {
 
 		// Initiate a clock
 		if (clock.contains("logical")) {
-			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0);
+			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0, 0);
 		} else if (clock.contains("vector")) {
-			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size());
+			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(), configurationFileReader.get);
 		}
 
 		// Setup server socket
