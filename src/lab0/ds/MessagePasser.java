@@ -114,9 +114,11 @@ public class MessagePasser {
 		timeStampedMessage.setSequenceNumber(sequenceNumber++);
 		timeStampedMessage.setSource(localName);
 		timeStampedMessage.setDuplicate(false);
-
+		
 		/* Add timestamp to the message */
-
+		clockService.incrementTimeStamp(timeStampedMessage);
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		
 		// Check send rule
 		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
 		if (toSendMessages.isEmpty()) { // if no message need to be sent now

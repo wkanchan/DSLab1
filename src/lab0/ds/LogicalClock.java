@@ -1,10 +1,8 @@
 package lab0.ds;
 
-import java.util.ArrayList;
-
 public class LogicalClock extends ClockService {
 
-	public static TimeStamp timeStamp = new TimeStamp(0, 0,0);
+	public static TimeStamp timeStamp;
 	
 	public LogicalClock() {
 		super(ClockType.LOGICAL);
@@ -16,4 +14,5 @@ public class LogicalClock extends ClockService {
 			  timeStamp.setLog_timeStamp(Math.max(timeStamp.getLog_timeStamp(), (Integer)message.getLogTimeStamp()) + 1);
 		}		
 	}
+
 }

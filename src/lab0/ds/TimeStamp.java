@@ -1,6 +1,5 @@
 package lab0.ds;
 
-import java.util.ArrayList;
 
 public class TimeStamp {
 	private int log_timeStamp;
@@ -20,12 +19,5 @@ public class TimeStamp {
 		this.log_timeStamp = log_timeStamp;
 	}
 
-	public ArrayList<Integer> getVec_timeStamp() {
-		return vec_timeStamp;
-	}
 
-	public void setVec_timeStamp(ArrayList<Integer> vec_timeStamp) {
-		this.vec_timeStamp = vec_timeStamp;
-	}
-	
 }

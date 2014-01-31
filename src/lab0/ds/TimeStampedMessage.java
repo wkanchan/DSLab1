@@ -2,6 +2,7 @@ package lab0.ds;
 
 public class TimeStampedMessage extends Message{
 
+
 	/**
 	 * 
 	 */
@@ -23,11 +24,6 @@ public class TimeStampedMessage extends Message{
 		this.setClockType(clockType);
 	}
 	
-//	public TimeStampedMessage(TimeStamp timeStamp, String source, String destination, String data) {
-//		super(source, destination, data);
-//		this.timeStamp = timeStamp;
-//	}
-
 	public ClockService getClockService() {
 		return clockService;
 	}
@@ -46,5 +42,13 @@ public class TimeStampedMessage extends Message{
 
 	public void setClockType(ClockService clockType) {
 		this.clockType = clockType;
+	}
+	
+	public TimeStamp getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(TimeStamp timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 }
