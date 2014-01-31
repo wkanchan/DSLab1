@@ -59,6 +59,7 @@ public class ApplicationViewer extends javax.swing.JFrame {
 
 		ConfigFileNameLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 		ConfigFileNameLabel.setText("Config File Name: ");
+		configFileNameField.setText("configfile.yaml");
 
 		localNameLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 		localNameLabel.setText("Local Name: ");
@@ -122,6 +123,7 @@ public class ApplicationViewer extends javax.swing.JFrame {
 
 		clockLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
 		clockLabel.setText("ClockType: ");
+		clockField.setText("logical");
 
 		sendButton.setText("Send");
 		sendButton.addActionListener(new java.awt.event.ActionListener() {

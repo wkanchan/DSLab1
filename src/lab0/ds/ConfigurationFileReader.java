@@ -89,13 +89,6 @@ public class ConfigurationFileReader {
 		if (list == null) {
 			return ;
 		}
-
-		// Get a global vector clock
-		ClockService clock = ClockFactory.useClock(ClockType.VECTOR);
-		VectorClock vectorClock = null;
-		if (clock instanceof VectorClock) {
-			vectorClock = (VectorClock)clock;
-		}
 		
 		for (HashMap<String, String> i : list) {
 			String name = i.get("name");

@@ -14,9 +14,9 @@ import lab0.ds.TimeStamp;
 import lab0.ds.TimeStampedMessage;
 
 public class MPLogger {
-	
+
 	public final static String COMMAND_PROMPT = "MPLogger# ";
-	
+
 	private ConcurrentLinkedQueue<TimeStampedMessage> messagesList;
 
 	private ConfigurationFileReader configurationFileReader;
@@ -33,15 +33,15 @@ public class MPLogger {
 			new MPLogger(args[0]);
 		}
 	}
-	
+
 	public MPLogger(String configurationFileName) {
 		// Parse configuration file
 		configurationFileReader = new ConfigurationFileReader(null);
 		configurationFileReader.parseFile(configurationFileName);
-		
+
 		// Initiate messages buffer
 		messagesList = new ConcurrentLinkedQueue<>();
-		
+
 		// Setup server socket
 		localPortNumber = configurationFileReader.getLoggerInfo().getPort();
 		System.out.println("Local port number: " + localPortNumber);
@@ -56,10 +56,13 @@ public class MPLogger {
 			System.out.println("Set up server socket failed!");
 			return;
 		}
-		
+
+		System.out.println("Usage:\npl\tPrint log sorted by logical timestamp\npv\t"
+				+ "Print log sorted by vector timestamp\nq\tquit");
+
 		/* Run thread to receive connection */
 		(new ReceiveMPConnectionThread(serverSocket, messagesList)).start();
-		
+
 		// Prompt for user command
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		printCommandPrompt();
@@ -68,35 +71,39 @@ public class MPLogger {
 			while ((inputCommand = in.readLine()) != null) {
 				if ("pl".equals(inputCommand) || "pv".equals(inputCommand)) {
 					// -- Print --
-					final ClockType CLOCK_TYPE;
-					if ("pl".equals(inputCommand))
-						CLOCK_TYPE = ClockType.LOGICAL;
-					else
-						CLOCK_TYPE = ClockType.VECTOR;
-					// Sort the messages list
-					ArrayList<TimeStampedMessage> sortedMessagesList = new ArrayList<>();
-					try {
-						for (TimeStampedMessage m: (TimeStampedMessage[])messagesList.toArray()) {
-							sortedMessagesList.add(m);
-						}
-						Collections.sort(sortedMessagesList, new Comparator<TimeStampedMessage>() {
-	
-							@Override
-							public int compare(TimeStampedMessage o1, TimeStampedMessage o2) {
-								if (CLOCK_TYPE == ClockType.LOGICAL) {
-									return o1.getTimeStamp().log_compareTo(o2.getTimeStamp());
-								} else if (CLOCK_TYPE == ClockType.VECTOR) {
-									return o1.getTimeStamp().vec_compareTo(o2.getTimeStamp());
-								}
-								return 0;
+					if (messagesList.isEmpty()) {
+						System.out.println("Log is empty.");
+					} else {
+						final ClockType CLOCK_TYPE;
+						if ("pl".equals(inputCommand))
+							CLOCK_TYPE = ClockType.LOGICAL;
+						else
+							CLOCK_TYPE = ClockType.VECTOR;
+						// Sort the messages list
+						ArrayList<TimeStampedMessage> sortedMessagesList = new ArrayList<>();
+						try {
+							for (Object obj : messagesList.toArray()) {
+								sortedMessagesList.add((TimeStampedMessage)obj);
 							}
-						});
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					// Print the sorted list
-					for (TimeStampedMessage message: sortedMessagesList) {
-						System.out.println(message);
+							Collections.sort(sortedMessagesList, new Comparator<TimeStampedMessage>() {
+	
+								@Override
+								public int compare(TimeStampedMessage o1, TimeStampedMessage o2) {
+									if (CLOCK_TYPE == ClockType.LOGICAL) {
+										return o1.getTimeStamp().log_compareTo(o2.getTimeStamp());
+									} else if (CLOCK_TYPE == ClockType.VECTOR) {
+										return o1.getTimeStamp().vec_compareTo(o2.getTimeStamp());
+									}
+									return 0;
+								}
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						// Print the sorted list
+						for (TimeStampedMessage message : sortedMessagesList) {
+							System.out.println(message);
+						}
 					}
 				} else if ("q".equals(inputCommand)) {
 					// -- Quit --
@@ -113,10 +120,9 @@ public class MPLogger {
 			System.exit(1);
 		}
 	}
-	
+
 	public void printCommandPrompt() {
-		System.out.print("\n-------------\n"+COMMAND_PROMPT);
+		System.out.print("\n-------------\n" + COMMAND_PROMPT);
 	}
-	
 
 }

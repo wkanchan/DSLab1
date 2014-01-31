@@ -1,12 +1,14 @@
 package lab0.ds;
 
-public class TimeStampedMessage extends Message {
+import java.io.Serializable;
 
+public class TimeStampedMessage extends Message implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8669213242403731962L;
+	
 	private ClockService clockService;
 	private TimeStamp timeStamp;
 	private ClockType clockType;

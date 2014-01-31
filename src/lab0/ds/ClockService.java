@@ -1,16 +1,9 @@
 package lab0.ds;
 
-import java.util.HashMap;
 
 public abstract class ClockService {
 
 	protected ClockType clockType = null;
-	
-	protected static TimeStamp timeStamp;
-	
-	public static TimeStamp getCurrentTimeStamp() {
-		return timeStamp;
-	}
 	
 	public ClockService(ClockType clockType) {
 		this.clockType = clockType;
@@ -24,13 +17,7 @@ public abstract class ClockService {
 		this.clockType = clockType;
 	}
 	
+	public abstract TimeStamp getTimeStamp();
 	protected abstract void incrementTimeStamp(TimeStampedMessage message);
 
-	public static TimeStamp getTimeStamp() {
-		return LogicalClock.timeStamp;
-	}
-
-	public static void setTimeStamp(TimeStamp timeStamp) {
-		LogicalClock.timeStamp = timeStamp;
-	}
 }

@@ -25,13 +25,14 @@ public class IncomingMPThread extends Thread {
 			// Wait for incoming messages forever (until something happens)
 			while (true) {
 				TimeStampedMessage incomingMessage = (TimeStampedMessage) in.readObject();
+				System.out.println("\nIncoming log!");
 				if (incomingMessage == null) {
 					break;
 				}
 				messagesList.add(incomingMessage);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Disconnected by MessagePasser.");
 		}
 	}
 }

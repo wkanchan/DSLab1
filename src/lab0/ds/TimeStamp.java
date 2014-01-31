@@ -1,7 +1,13 @@
 package lab0.ds;
 
+import java.io.Serializable;
 
-public class TimeStamp {
+
+public class TimeStamp implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6383759908820082056L;
 	private int log_timeStamp;
 	private int[] vec_timeStamp;
 
