@@ -81,7 +81,6 @@ public class MessagePasser {
 		
 		TimerTask task = new FileModified(file) {
 			protected void onChange( File file ) {
-				//code the action on a change
 				/* read from dropbox folder */
 				configurationFileReader.parseFile(configurationFileName);
 				ruleChecker.setSendRules(configurationFileReader.getSendRules());
