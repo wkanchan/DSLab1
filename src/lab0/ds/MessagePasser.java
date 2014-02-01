@@ -83,7 +83,7 @@ public class MessagePasser {
 		}
 
 		ArrayList<Process> al = configurationFileReader.getProcesses();
-		int local_id;
+		int local_id = 0;
 		for(Process process : al){
 			if (process.getName().equals(localName)) {
 				local_id = al.indexOf(localName);
@@ -158,7 +158,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockFactory.getTimeStamp());
 
 		// Check send rule
 		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
@@ -325,7 +325,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockFactory.getTimeStamp());
 
 		/* Log the event */
 		try {
