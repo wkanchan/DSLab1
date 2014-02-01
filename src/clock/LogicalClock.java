@@ -1,7 +1,7 @@
-package lab0.ds;
+package clock;
 
-import clock.ClockService;
-import clock.ClockType;
+import lab0.ds.TimeStamp;
+import lab0.ds.TimeStampedMessage;
 
 public class LogicalClock extends ClockService {
 
@@ -22,10 +22,4 @@ public class LogicalClock extends ClockService {
 			}
 		}		
 	}
-
-	@Override
-	public TimeStamp getTimeStamp() {
-		return timeStamp;
-	}
-
 }

@@ -32,12 +32,8 @@ public class MessagePasser {
 
 	private ConcurrentLinkedQueue<TimeStampedMessage> sendBuffer;
 	private ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer;
-	private ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer; // store
-																			// received
-																			// messages
-																			// that
-																			// are
-																			// delayed
+	// Store received messages that are delayed
+	private ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer; 
 
 	private ServerSocket serverSocket;
 	private int localPortNumber;
@@ -82,11 +78,18 @@ public class MessagePasser {
 			textArea.append("Cannot connect to logger\n");
 		}
 
+		ArrayList<Process> al = configurationFileReader.getProcesses();
+		int local_id = -1;
+		for(Process process : al){
+			if (process.getName().equals(localName)) {
+				local_id = al.indexOf(localName);
+			}
+		}
 		// Initiate a clock
 		if (clock.contains("logical")) {
-			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0);
+			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0, 0);
 		} else if (clock.contains("vector")) {
-			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size());
+			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(), local_id);
 		}
 
 		// Setup server socket
@@ -112,7 +115,7 @@ public class MessagePasser {
 
 		return true;
 	}
-
+	
 	public void send(Message message) {
 
 		// check if file is modified
@@ -150,7 +153,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(clockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
 
 		// Check send rule
 		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
@@ -182,9 +185,8 @@ public class MessagePasser {
 				// Log
 				try {
 					loggerOut.writeObject(toSendMessage);
-					textArea.append("Event logged");
+					textArea.append("Send event logged");
 				} catch (Exception e) {
-					e.printStackTrace();
 					textArea.append("Cannot log the send event");
 				}
 			} catch (IOException e) {
@@ -317,7 +319,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(clockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
 
 		/* Log the event */
 		try {
