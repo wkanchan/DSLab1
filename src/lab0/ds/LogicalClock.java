@@ -6,7 +6,7 @@ public class LogicalClock extends ClockService {
 	
 	public LogicalClock() {
 		super(ClockType.LOGICAL);
-		timeStamp = new TimeStamp(0, new int[0]);
+		timeStamp = new TimeStamp(0, new Integer[0]);
 	}
 
 	@Override

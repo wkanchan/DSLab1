@@ -6,7 +6,7 @@ public class VectorClock extends ClockService {
 
 	public VectorClock(int numberOfProcesses) {
 		super(ClockType.VECTOR);
-		timeStamp = new TimeStamp(0, new int[numberOfProcesses]);
+		timeStamp = new TimeStamp(0, new Integer[numberOfProcesses]);
 	}
 
 	/*remove this */

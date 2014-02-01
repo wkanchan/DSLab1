@@ -173,7 +173,7 @@ public class MessagePasser {
 					return;
 				}
 				connection.getOutputStream().writeObject(toSendMessage);
-				textArea.append("Send a message to " + toSendMessage.getDestination() + "\n");
+				textArea.append("Message sent "+toSendMessage+"\n");
 
 				// Log
 				try {

@@ -25,7 +25,7 @@ public class IncomingMPThread extends Thread {
 			// Wait for incoming messages forever (until something happens)
 			while (true) {
 				TimeStampedMessage incomingMessage = (TimeStampedMessage) in.readObject();
-				System.out.println("\nIncoming log!");
+				System.out.println("\nMessage received! "+incomingMessage);
 				if (incomingMessage == null) {
 					break;
 				}

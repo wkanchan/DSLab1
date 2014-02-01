@@ -1,8 +1,14 @@
 package lab0.ds;
 
+import java.io.Serializable;
 
-public abstract class ClockService {
 
+public abstract class ClockService implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected ClockType clockType = null;
 	
 	public ClockService(ClockType clockType) {

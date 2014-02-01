@@ -4,10 +4,7 @@ import java.io.Serializable;
 
 public class TimeStampedMessage extends Message implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8669213242403731962L;
+	private static final long serialVersionUID = 1L;
 	
 	private ClockService clockService;
 	private TimeStamp timeStamp;

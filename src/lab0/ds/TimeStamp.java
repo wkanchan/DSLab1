@@ -4,14 +4,11 @@ import java.io.Serializable;
 
 
 public class TimeStamp implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6383759908820082056L;
-	private int log_timeStamp;
-	private int[] vec_timeStamp;
+	private static final long serialVersionUID = 1L;
+	private Integer log_timeStamp;
+	private Integer[] vec_timeStamp;
 
-	public TimeStamp(Integer log_timeStamp, int[] vec_timeStamp) {
+	public TimeStamp(Integer log_timeStamp, Integer[] vec_timeStamp) {
 		super();
 		this.log_timeStamp = log_timeStamp;
 		this.vec_timeStamp = vec_timeStamp;
@@ -25,7 +22,7 @@ public class TimeStamp implements Serializable {
 		this.log_timeStamp = log_timeStamp;
 	}
 	
-	public int[] getVec_timeStamp() {
+	public Integer[] getVec_timeStamp() {
 		return vec_timeStamp;
 	}
 	
@@ -35,13 +32,7 @@ public class TimeStamp implements Serializable {
 	 * @return
 	 */
 	public int log_compareTo(TimeStamp o) {
-		if (this.log_timeStamp < o.log_timeStamp) {
-			return -1;
-		} else if (this.log_timeStamp > o.log_timeStamp) {
-			return 1;
-		} else {
-			return 0;
-		}
+		return this.log_timeStamp.compareTo(o.log_timeStamp);
 	}
 
 	/**
@@ -56,13 +47,13 @@ public class TimeStamp implements Serializable {
 		// Check condition 1: V == V' 2: V <= V' 3: V >= V'
 		boolean isEqual = true, isLessThanOrEqualTo = true, isMoreThanOrEqualTo = true;
 		for (int i=0; i<this.vec_timeStamp.length; i++) {
-			if (this.vec_timeStamp[i] != o.vec_timeStamp[i]) {
+			if (!this.vec_timeStamp[i].equals(o.vec_timeStamp[i])) {
 				isEqual = false;
 			}
-			if (this.vec_timeStamp[i] > o.vec_timeStamp[i]) {
+			if (this.vec_timeStamp[i].compareTo(o.vec_timeStamp[i]) > 0) {
 				isLessThanOrEqualTo = false;
 			}
-			if (this.vec_timeStamp[i] < o.vec_timeStamp[i]) {
+			if (this.vec_timeStamp[i].compareTo(o.vec_timeStamp[i]) < 0) {
 				isMoreThanOrEqualTo = false;
 			}
 		}

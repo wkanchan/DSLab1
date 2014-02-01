@@ -6,17 +6,17 @@
 # These names will be used for src and dest addresses for the Message 
 # The local node’s name is included in this list
 configuration:
-  - name	: alice	
+  - name	: alice
     ip	: 127.0.0.1
     port	: 12344 # This is the incoming port on which MP will listen	
     # May be changed for further communication as usual	
-  - name	: bob 	
+  - name	: bob
     ip	: 127.0.0.1
     port	: 14255
-  - name : jiawen   
-    ip  : 69.181.189.36 
+  - name : charlie
+    ip  : 127.0.0.1 
     port  : 15166
-  - name  : anvitha   
+  - name  : d
     ip  : 69.181.189.36
     port  : 16077
 
