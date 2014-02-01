@@ -82,11 +82,19 @@ public class MessagePasser {
 			textArea.append("Cannot connect to logger\n");
 		}
 
+		ArrayList<Process> al = configurationFileReader.getProcesses();
+		int local_id;
+		for(Process process : al){
+			if (process.getName().equals(localName)) {
+				local_id = al.indexOf(localName);
+			}
+		}
 		// Initiate a clock
 		if (clock.contains("logical")) {
 			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0, 0);
 		} else if (clock.contains("vector")) {
-			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(), configurationFileReader.get);
+			
+			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(), local_id);
 		}
 
 		// Setup server socket
@@ -112,7 +120,7 @@ public class MessagePasser {
 
 		return true;
 	}
-
+	
 	public void send(Message message) {
 
 		// check if file is modified
@@ -150,7 +158,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(clockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
 
 		// Check send rule
 		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
@@ -317,7 +325,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(clockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
 
 		/* Log the event */
 		try {

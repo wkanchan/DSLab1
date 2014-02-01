@@ -23,11 +23,15 @@ public class TimeStamp implements Serializable {
 	public void setLog_timeStamp(Integer log_timeStamp) {
 		this.log_timeStamp = log_timeStamp;
 	}
-	
-	public int[] getVec_timeStamp() {
-		return vec_timeStamp;
+
+	public int getVec_timeStamp(int local_id) {
+		return vec_timeStamp[local_id];
 	}
-	
+
+	public void setVec_timeStamp(int local_id, int i) {
+		this.vec_timeStamp[local_id] = i;
+	}
+
 	/**
 	 * Compare method for logical time stamp
 	 * @param o
@@ -75,5 +79,5 @@ public class TimeStamp implements Serializable {
 		}
 		return 0;
 	}
-	
+
 }
