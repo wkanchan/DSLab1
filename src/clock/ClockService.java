@@ -21,6 +21,6 @@ public abstract class ClockService {
 	}
 	
 	public abstract TimeStamp getTimeStamp();
-	protected abstract void incrementTimeStamp(TimeStampedMessage message);
+	public abstract void incrementTimeStamp(TimeStampedMessage message);
 
 }

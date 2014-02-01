@@ -13,9 +13,9 @@ public class VectorClock extends ClockService {
 	}
 
 	@Override
-	protected void incrementTimeStamp(TimeStampedMessage message) {
+	public void incrementTimeStamp(TimeStampedMessage message) {
 		synchronized (this) {
-			  timeStamp.setVec_timeStamp((Math.max(timeStamp.getVec_timeStamp(), (Integer)message.getVecTimeStamp()) + 1);
+//			  timeStamp.setVec_timeStamp((Math.max(timeStamp.getVec_timeStamp(), (Integer)message.getVecTimeStamp()) + 1);
 		}
 	}
 

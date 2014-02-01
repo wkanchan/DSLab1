@@ -13,7 +13,7 @@ public class LogicalClock extends ClockService {
 	}
 
 	@Override
-	protected void incrementTimeStamp(TimeStampedMessage message) {
+	public void incrementTimeStamp(TimeStampedMessage message) {
 		synchronized (this) {
 			if (message.getTimeStamp() == null) {
 				timeStamp.setLog_timeStamp(timeStamp.getLog_timeStamp() + 1);

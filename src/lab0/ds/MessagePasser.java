@@ -84,9 +84,9 @@ public class MessagePasser {
 
 		// Initiate a clock
 		if (clock.contains("logical")) {
-			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0, 0);
+			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0);
 		} else if (clock.contains("vector")) {
-			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(), configurationFileReader.get);
+			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size());
 		}
 
 		// Setup server socket
