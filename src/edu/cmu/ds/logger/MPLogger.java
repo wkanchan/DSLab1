@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import lab0.ds.ClockType;
+import clock.ClockType;
+
 import lab0.ds.ConfigurationFileReader;
 import lab0.ds.TimeStamp;
 import lab0.ds.TimeStampedMessage;

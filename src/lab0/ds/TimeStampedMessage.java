@@ -2,6 +2,9 @@ package lab0.ds;
 
 import java.io.Serializable;
 
+import clock.ClockService;
+import clock.ClockType;
+
 public class TimeStampedMessage extends Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;

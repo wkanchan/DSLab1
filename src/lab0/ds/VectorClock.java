@@ -1,5 +1,8 @@
 package lab0.ds;
 
+import clock.ClockService;
+import clock.ClockType;
+
 public class VectorClock extends ClockService {
 	
 	public static TimeStamp timeStamp;
@@ -9,11 +12,11 @@ public class VectorClock extends ClockService {
 		timeStamp = new TimeStamp(0, new Integer[numberOfProcesses]);
 	}
 
-	/*remove this */
 	@Override
 	protected void incrementTimeStamp(TimeStampedMessage message) {
-		// TODO Auto-generated method stub
-		
+		synchronized (this) {
+			  timeStamp.setVec_timeStamp((Math.max(timeStamp.getVec_timeStamp(), (Integer)message.getVecTimeStamp()) + 1);
+		}
 	}
 
 	@Override

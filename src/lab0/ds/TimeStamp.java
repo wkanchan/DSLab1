@@ -2,7 +2,6 @@ package lab0.ds;
 
 import java.io.Serializable;
 
-
 public class TimeStamp implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer log_timeStamp;
