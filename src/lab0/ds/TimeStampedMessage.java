@@ -42,12 +42,15 @@ public class TimeStampedMessage extends Message implements Serializable {
 	}
 	
 	public void setTimeStamp(TimeStamp timeStamp) {
-//		System.out.println("setTimeStamp current("+this.timeStamp+" source("+timeStamp);
+		int vecLength = timeStamp.getVec_timeStamp().length;
 		if (this.timeStamp == null) {
-			this.timeStamp = new TimeStamp(timeStamp.getLog_timeStamp(), timeStamp.getVec_timeStamp());
-		} else {
-			this.timeStamp.setLog_timeStamp(timeStamp.getLog_timeStamp());
-			this.timeStamp.setVec_timeStamp(timeStamp.getVec_timeStamp());
+			this.timeStamp = new TimeStamp(0, new int[vecLength]);
+		}
+		// Set logical
+		this.timeStamp.setLog_timeStamp(timeStamp.getLog_timeStamp());
+		// Set vector
+		for (int i=0; i<vecLength; i++) {
+			this.timeStamp.setVec_timeStamp(i, timeStamp.getVec_timeStamp(i));
 		}
 	}
 

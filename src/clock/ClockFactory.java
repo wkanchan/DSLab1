@@ -42,7 +42,7 @@ public class ClockFactory {
 		case LOGICAL:
 			LogicalClock.timeStamp = timeStamp;
 		case VECTOR:
-			VectorClock.timeStamp = timeStamp;
+			VectorClock.timeStamp.setVec_timeStamp(timeStamp.getVec_timeStamp());
 		default:
 			break;
 		}

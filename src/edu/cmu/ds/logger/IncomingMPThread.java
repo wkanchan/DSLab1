@@ -1,5 +1,6 @@
 package edu.cmu.ds.logger;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -20,11 +21,11 @@ public class IncomingMPThread extends Thread {
 	public void run() {
 		System.out.println("\nMessagePasser connected!");
 		ObjectInputStream in = null;
+		TimeStampedMessage incomingMessage = null;
 		try {
 			in = new ObjectInputStream(incomingMPSocket.getInputStream());
-			// Wait for incoming messages forever (until something happens)
 			while (true) {
-				TimeStampedMessage incomingMessage = (TimeStampedMessage) in.readObject();
+				incomingMessage = (TimeStampedMessage) in.readObject();
 				System.out.println("\nMessage received! "+incomingMessage);
 				if (incomingMessage == null) {
 					break;
@@ -32,8 +33,14 @@ public class IncomingMPThread extends Thread {
 				messagesList.add(incomingMessage);
 			}
 		} catch (Exception e) {
-//			e.printStackTrace();
-			System.out.println("Disconnected by MessagePasser. "+e);
+			e.printStackTrace();
+		}
+		try {
+			incomingMPSocket.close();
+			in.close();
+		} catch (IOException e) {
+		} finally {
+			System.out.println("Disconnected by the message sender.");
 		}
 	}
 }
