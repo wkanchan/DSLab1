@@ -26,16 +26,16 @@ public class TimeStamp implements Serializable {
 	public int getVec_timeStamp(int local_id) {
 		return vec_timeStamp[local_id];
 	}
-
-	public void setVec_timeStamp(int local_id, int i) {
-		this.vec_timeStamp[local_id] = i;
+	
+	public void setVec_timeStamp(int local_id, int value) {
+		this.vec_timeStamp[local_id] = value;
 	}
 	
-	int[] getVec_timeStamp() {
+	public int[] getVec_timeStamp() {
 		return vec_timeStamp;
 	}
 	
-	void setVec_timeStamp(int[] vec_timeStamp) {
+	public void setVec_timeStamp(int[] vec_timeStamp) {
 		for (int i=0; i<vec_timeStamp.length; i++) {
 			this.vec_timeStamp[i] = vec_timeStamp[i];
 		}

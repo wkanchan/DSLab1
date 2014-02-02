@@ -66,9 +66,9 @@ public class TimeStampedMessage extends Message implements Serializable {
 		buf.append("LOGICAL <");
 		buf.append(timeStamp.getLog_timeStamp());
 		buf.append(">, VECTOR <");
-//		for (int t : timeStamp.getVec_timeStamp()) {
-//			buf.append(t + ",");
-//		}
+		for (int t : timeStamp.getVec_timeStamp()) {
+			buf.append(t + ",");
+		}
 		buf.append(">, SequenceNumber=" + super.sequenceNumber + ", ");
 		buf.append("Source=" + super.source + ", ");
 		buf.append("Destination=" + super.destination + ", ");
