@@ -16,8 +16,8 @@ configuration:
   - name : charlie
     ip  : 127.0.0.1 
     port  : 15166
-  - name  : d
-    ip  : 69.181.189.36
+  - name  : daphnie
+    ip  : 127.0.0.1
     port  : 16077
 
 sendRules :

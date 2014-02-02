@@ -85,6 +85,7 @@ public class RuleChecker {
 	}
 	
 	public TimeStampedMessage checkReceiveRule(TimeStampedMessage message, ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer) {
+		if (message == null) return null;
 		/* Check if matches a receive rule */
 		Rule rule = null;
 		for (Rule receiveRule: receiveRules) {

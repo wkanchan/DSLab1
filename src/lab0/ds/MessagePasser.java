@@ -334,14 +334,16 @@ public class MessagePasser {
 		String destination = timeStampedMessage.getDestination();
 		Connection connection = null;
 
-		/* Add timestamp to the message */
-		clockService.incrementTimeStamp(timeStampedMessage);
+		// LC1 & VC2: Just before timestamping event, increments local clock
+		clockService.incrementTimeStamp();
+
+		// LC2(a) & VC3: Includes the timestamp to the message
 		timeStampedMessage.setTimeStamp(ClockFactory.getTimeStamp());
 
 		/* Log the event */
 		try {
 			loggerOut.writeObject(timeStampedMessage);
-			textArea.append("Event logged");
+			textArea.append("Logged send delay");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

@@ -100,8 +100,19 @@ public class MPLogger {
 							e.printStackTrace();
 						}
 						// Print the sorted list
-						for (TimeStampedMessage message : sortedMessagesList) {
-							System.out.println(message);
+						TimeStampedMessage last = null;
+						for (TimeStampedMessage current : sortedMessagesList) {
+							if (last != null) {
+								if (CLOCK_TYPE == ClockType.LOGICAL) {
+									if (last.getTimeStamp().log_compareTo(current.getTimeStamp()) != 0)
+										System.out.println("~~~~~~~~~~~~~");
+								} else if (CLOCK_TYPE == ClockType.VECTOR) {
+									if (last.getTimeStamp().vec_compareTo(current.getTimeStamp()) != 0)
+										System.out.println("~~~~~~~~~~~~~");
+								}
+							}
+							System.out.println(current);
+							last = current;
 						}
 					}
 				} else if ("q".equals(inputCommand)) {

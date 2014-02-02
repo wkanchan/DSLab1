@@ -23,6 +23,10 @@ public class VectorClock extends ClockService {
 
 	@Override
 	public void incrementTimeStamp(TimeStampedMessage message) {
+		if (message == null) {
+			incrementTimeStamp();
+			return;
+		}
 		synchronized (timeStamp) {
 			int[] messageVectorTimeStamp = message.getTimeStamp().getVec_timeStamp();
 			// VC4: Merge operation
@@ -31,7 +35,8 @@ public class VectorClock extends ClockService {
 					timeStamp.setVec_timeStamp(local_id,
 							Math.max(timeStamp.getVec_timeStamp(local_id), messageVectorTimeStamp[local_id]) + 1);
 				} else {
-					timeStamp.setVec_timeStamp(i, messageVectorTimeStamp[i]);
+					timeStamp.setVec_timeStamp(i, 
+							Math.max(timeStamp.getVec_timeStamp(i), messageVectorTimeStamp[i]));
 				}
 			}
 			// Update local clock

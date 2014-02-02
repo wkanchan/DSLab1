@@ -11,29 +11,29 @@ public class IncomingMPThread extends Thread {
 
 	private Socket incomingMPSocket;
 	private ConcurrentLinkedQueue<TimeStampedMessage> messagesList;
-	
+
 	public IncomingMPThread(Socket incomingMPSocket, ConcurrentLinkedQueue<TimeStampedMessage> messagesList) {
 		this.incomingMPSocket = incomingMPSocket;
 		this.messagesList = messagesList;
 	}
-	
+
 	@Override
 	public void run() {
-		System.out.println("\nMessagePasser connected!");
+		System.out.print("\nMessagePasser connected!\n" + MPLogger.COMMAND_PROMPT);
 		ObjectInputStream in = null;
 		TimeStampedMessage incomingMessage = null;
 		try {
 			in = new ObjectInputStream(incomingMPSocket.getInputStream());
 			while (true) {
 				incomingMessage = (TimeStampedMessage) in.readObject();
-				System.out.println("\nMessage received! "+incomingMessage);
 				if (incomingMessage == null) {
 					break;
 				}
 				messagesList.add(incomingMessage);
+				System.out.print("\nLogged! " + incomingMessage + "\n" + MPLogger.COMMAND_PROMPT);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		try {
 			incomingMPSocket.close();
