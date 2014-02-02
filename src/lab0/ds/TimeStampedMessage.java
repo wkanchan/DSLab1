@@ -7,8 +7,10 @@ import clock.ClockType;
 
 public class TimeStampedMessage extends Message implements Serializable {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	
 	private ClockService clockService;
 	private TimeStamp timeStamp;
 	private ClockType clockType;
@@ -40,7 +42,13 @@ public class TimeStampedMessage extends Message implements Serializable {
 	}
 	
 	public void setTimeStamp(TimeStamp timeStamp) {
-		this.timeStamp = timeStamp;
+//		System.out.println("setTimeStamp current("+this.timeStamp+" source("+timeStamp);
+		if (this.timeStamp == null) {
+			this.timeStamp = new TimeStamp(timeStamp.getLog_timeStamp(), timeStamp.getVec_timeStamp());
+		} else {
+			this.timeStamp.setLog_timeStamp(timeStamp.getLog_timeStamp());
+			this.timeStamp.setVec_timeStamp(timeStamp.getVec_timeStamp());
+		}
 	}
 
 	public ClockType getClockType() {

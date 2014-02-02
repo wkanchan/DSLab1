@@ -3,12 +3,14 @@ package lab0.ds;
 import java.io.Serializable;
 
 public class TimeStamp implements Serializable {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	private Integer log_timeStamp;
-	private Integer[] vec_timeStamp;
+	private int log_timeStamp;
+	private int[] vec_timeStamp;
 
-	public TimeStamp(Integer log_timeStamp, Integer[] vec_timeStamp) {
-		super();
+	public TimeStamp(int log_timeStamp, int[] vec_timeStamp) {
 		this.log_timeStamp = log_timeStamp;
 		this.vec_timeStamp = vec_timeStamp;
 	}
@@ -17,7 +19,7 @@ public class TimeStamp implements Serializable {
 		return log_timeStamp;
 	}
 
-	public void setLog_timeStamp(Integer log_timeStamp) {
+	public void setLog_timeStamp(int log_timeStamp) {
 		this.log_timeStamp = log_timeStamp;
 	}
 
@@ -28,6 +30,16 @@ public class TimeStamp implements Serializable {
 	public void setVec_timeStamp(int local_id, int i) {
 		this.vec_timeStamp[local_id] = i;
 	}
+	
+	int[] getVec_timeStamp() {
+		return vec_timeStamp;
+	}
+	
+	void setVec_timeStamp(int[] vec_timeStamp) {
+		for (int i=0; i<vec_timeStamp.length; i++) {
+			this.vec_timeStamp[i] = vec_timeStamp[i];
+		}
+	}
 
 	/**
 	 * Compare method for logical time stamp
@@ -35,7 +47,12 @@ public class TimeStamp implements Serializable {
 	 * @return
 	 */
 	public int log_compareTo(TimeStamp o) {
-		return this.log_timeStamp.compareTo(o.log_timeStamp);
+		if (this.log_timeStamp == o.log_timeStamp)
+			return 0;
+		else if (this.log_timeStamp < o.log_timeStamp)
+			return -1;
+		else
+			return 1;
 	}
 
 	/**
@@ -50,15 +67,12 @@ public class TimeStamp implements Serializable {
 		// Check condition 1: V == V' 2: V <= V' 3: V >= V'
 		boolean isEqual = true, isLessThanOrEqualTo = true, isMoreThanOrEqualTo = true;
 		for (int i=0; i<this.vec_timeStamp.length; i++) {
-			if (!this.vec_timeStamp[i].equals(o.vec_timeStamp[i])) {
+			if (this.vec_timeStamp[i] != o.vec_timeStamp[i])
 				isEqual = false;
-			}
-			if (this.vec_timeStamp[i].compareTo(o.vec_timeStamp[i]) > 0) {
+			if (this.vec_timeStamp[i] > o.vec_timeStamp[i])
 				isLessThanOrEqualTo = false;
-			}
-			if (this.vec_timeStamp[i].compareTo(o.vec_timeStamp[i]) < 0) {
+			if (this.vec_timeStamp[i] < o.vec_timeStamp[i])
 				isMoreThanOrEqualTo = false;
-			}
 		}
 		// Return result -1: V <= V' 0: V == V' or V || V' 1: V >= V'
 		if (isEqual || (!isLessThanOrEqualTo && !isMoreThanOrEqualTo)) {

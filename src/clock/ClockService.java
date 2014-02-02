@@ -1,6 +1,5 @@
 package clock;
 
-import lab0.ds.TimeStamp;
 import lab0.ds.TimeStampedMessage;
 
 
@@ -20,13 +19,15 @@ public abstract class ClockService {
 		this.clockType = clockType;
 	}
 
-	public abstract TimeStamp getTimeStamp() {
-		return LogicalClock.timeStamp;
-	}
-
-	public static void setTimeStamp(TimeStamp timeStamp) {
-		LogicalClock.timeStamp = timeStamp;
-	}
+	/**
+	 * Just increment by one
+	 */
+	public abstract void incrementTimeStamp();
+	
+	/**
+	 * Increment by comparing to message's timestamp
+	 * @param message
+	 */
 	public abstract void incrementTimeStamp(TimeStampedMessage message);
 
 }

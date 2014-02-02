@@ -39,10 +39,6 @@ public class ReceiveMessageJob implements Runnable {
             		return ;
             	}
                 TimeStampedMessage message = (TimeStampedMessage)connection.getInputStream().readObject();
-                
-                /* Add timestamp to the message */
-        		clockService.incrementTimeStamp(message);
-        		message.setTimeStamp(clockService.getTimeStamp());
         		
                 if (message != null) {
                     receiveBuffer.add(message);

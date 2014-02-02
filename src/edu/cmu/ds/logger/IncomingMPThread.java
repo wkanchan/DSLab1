@@ -32,7 +32,8 @@ public class IncomingMPThread extends Thread {
 				messagesList.add(incomingMessage);
 			}
 		} catch (Exception e) {
-			System.out.println("Disconnected by MessagePasser.");
+//			e.printStackTrace();
+			System.out.println("Disconnected by MessagePasser. "+e);
 		}
 	}
 }

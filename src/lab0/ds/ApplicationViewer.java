@@ -63,6 +63,7 @@ public class ApplicationViewer extends javax.swing.JFrame {
 
 		localNameLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 		localNameLabel.setText("Local Name: ");
+		localNameField.setText("alice");
 
 		startButton.setText("Start");
 		startButton.addActionListener(new java.awt.event.ActionListener() {
@@ -114,16 +115,18 @@ public class ApplicationViewer extends javax.swing.JFrame {
 
 		destinationLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 		destinationLabel.setText("Destination: ");
+		destinationField.setText("alice");
 
 		dataLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 		dataLabel.setText("Data: ");
 
 		kindLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 		kindLabel.setText("Kind: ");
+		kindField.setText("test");
 
 		clockLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
 		clockLabel.setText("ClockType: ");
-		clockField.setText("logical");
+		clockField.setText("vector");
 
 		sendButton.setText("Send");
 		sendButton.addActionListener(new java.awt.event.ActionListener() {

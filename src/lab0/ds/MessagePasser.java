@@ -33,7 +33,7 @@ public class MessagePasser {
 	private ConcurrentLinkedQueue<TimeStampedMessage> sendBuffer;
 	private ConcurrentLinkedQueue<TimeStampedMessage> receiveBuffer;
 	// Store received messages that are delayed
-	private ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer; 
+	private ConcurrentLinkedDeque<TimeStampedMessage> delayedMessageBuffer;
 
 	private ServerSocket serverSocket;
 	private int localPortNumber;
@@ -79,17 +79,19 @@ public class MessagePasser {
 		}
 
 		ArrayList<Process> al = configurationFileReader.getProcesses();
-		int local_id = -1;
-		for(Process process : al){
-			if (process.getName().equals(localName)) {
-				local_id = al.indexOf(localName);
+		int local_id = 0;
+		for (int i=0; i<al.size(); i++) {
+			if (al.get(i).getName().equals(localName)) {
+				local_id = i;
+				break;
 			}
 		}
 		// Initiate a clock
 		if (clock.contains("logical")) {
 			clockService = ClockFactory.useClock(ClockType.LOGICAL, 0, 0);
 		} else if (clock.contains("vector")) {
-			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(), local_id);
+			clockService = ClockFactory.useClock(ClockType.VECTOR, configurationFileReader.getProcesses().size(),
+					local_id);
 		}
 
 		// Setup server socket
@@ -115,7 +117,7 @@ public class MessagePasser {
 
 		return true;
 	}
-	
+
 	public void send(Message message) {
 
 		// check if file is modified
@@ -151,18 +153,24 @@ public class MessagePasser {
 		timeStampedMessage.setSource(localName);
 		timeStampedMessage.setDuplicate(false);
 
-		/* Add timestamp to the message */
-		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
-
 		// Check send rule
 		ArrayList<TimeStampedMessage> toSendMessages = ruleChecker.checkSendRule(timeStampedMessage, sendBuffer);
-		if (toSendMessages.isEmpty()) { // if no message need to be sent now
+		if (toSendMessages.isEmpty()) {
+			// If the rule is "drop". We still need to increment local clock
+			// since this is an event. (LC1 & VC2)
+			clockService.incrementTimeStamp();
 			return;
 		}
 
 		// Send message
 		for (TimeStampedMessage toSendMessage : toSendMessages) {
+
+			// LC1 & VC2: Just before timestamping event, increments local clock
+			clockService.incrementTimeStamp();
+
+			// LC2(a) & VC3: Includes the timestamp to the message
+			toSendMessage.setTimeStamp(ClockFactory.getTimeStamp());
+
 			try {
 				if (connection.getOutputStream() == null) {
 					textArea.append("Connection's output stream doesn't exist\n");
@@ -180,18 +188,18 @@ public class MessagePasser {
 					return;
 				}
 				connection.getOutputStream().writeObject(toSendMessage);
-				textArea.append("Message sent "+toSendMessage+"\n");
+				textArea.append("Message sent " + toSendMessage + "\n");
 
 				// Log
 				try {
 					loggerOut.writeObject(toSendMessage);
-					textArea.append("Send event logged");
+					textArea.append("Logged send event.");
 				} catch (Exception e) {
-					textArea.append("Cannot log the send event");
+					textArea.append("Couldn't log the send event");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				textArea.append(e+": Couldn't send the message "+toSendMessage);
+				textArea.append(e + ": Couldn't send the message " + toSendMessage);
 			}
 		}
 
@@ -245,16 +253,25 @@ public class MessagePasser {
 			if (toReturnMessage != null) {
 				message = toReturnMessage;
 				break;
+			} else {
+				// Drop. But still increment local clock
+				clockService.incrementTimeStamp();
 			}
 		}
+        
+        // LC2(b) & VC4: On receiving a message. Update local clock = max(local time, message's time)
+        clockService.incrementTimeStamp(message);
+        
+        // Re-assign the message's timestamp with the updated local one
+		message.setTimeStamp(ClockFactory.getTimeStamp());
 
 		// Log
 		try {
 			loggerOut.writeObject(message);
-			textArea.append("Event logged");
+			textArea.append("Logged the receive event.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			textArea.append("Cannot log the receive event");
+			textArea.append("Couldn't log the event.");
 		}
 
 		return message;
@@ -319,7 +336,7 @@ public class MessagePasser {
 
 		/* Add timestamp to the message */
 		clockService.incrementTimeStamp(timeStampedMessage);
-		timeStampedMessage.setTimeStamp(ClockService.getTimeStamp());
+		timeStampedMessage.setTimeStamp(ClockFactory.getTimeStamp());
 
 		/* Log the event */
 		try {
